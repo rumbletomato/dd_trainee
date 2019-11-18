@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:latest
+    volumes:
+      #      - ./db/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data
+
+    ports:
+      - "5435:5432"
+
+  web:
+    build: ./simple_crud
+    expose:
+      - "8000"
+    links:
+      - db:db
+    command: python /usr/src/simple_crud/server.py
+    volumes:
+      - ./media:/usr/src/simple_crud/media
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:
